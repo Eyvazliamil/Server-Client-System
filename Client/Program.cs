@@ -1,9 +1,53 @@
-﻿using System.Net;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 
 class Program
 {
+    static string ReadMessage()
+    {
+        Console.Write("Message...");
+
+        var message = new StringBuilder();
+
+        while (true)
+        {
+            var key = Console.ReadKey(true);
+
+            if (key.Key == ConsoleKey.Enter)
+            {
+                Console.WriteLine();
+                break;
+            }
+
+            if (key.Key == ConsoleKey.Backspace)
+            {
+                if (message.Length > 0)
+                {
+                    message.Length--;
+
+                    Console.Write("\b \b");
+                }
+
+                continue;
+            }
+
+            if (!char.IsControl(key.KeyChar))
+            { 
+                if (message.Length == 0)
+                {
+                    Console.Write("\r");
+                    Console.Write(new string(' ', Console.WindowWidth - 1));
+                    Console.Write("\r");
+                }
+
+                message.Append(key.KeyChar);
+                Console.Write(key.KeyChar);
+            }
+        }
+
+        return message.ToString();
+    }
     static void Main(string[] args)
     {
         var client = new Socket(
@@ -41,7 +85,7 @@ class Program
 
                 while (true)
                 {
-                    var msg = Console.ReadLine();
+                    string msg = ReadMessage();
 
                     var bufer = Encoding.Default.GetBytes(msg);
                     client.Send(bufer);
